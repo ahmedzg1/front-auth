@@ -24,6 +24,11 @@ if(searchedUser){
        console.log(hashedPassWord) 
        newUser.passWord = hashedPassWord;
        // generate a token 
+       const newUserToken =   await newUser.save();
+       const payload={
+        _id:newUserToken._id,
+    name: newUserToken.name,
+     };
       
        const token = await jwt.sign(payload, process.env.SecretOrkey,{
            expiresIn : 3600, });
@@ -32,23 +37,20 @@ if(searchedUser){
        
        
        
-    const newUserToken =   await newUser.save();
-       const payload={
-        _id:nnewUserToken._id,
-    name: newUserToken.name,
-     };
+    
+     
        
        
        res.status(200).send({newUserToken, msg :"user is saved",token : `bearer ${token}`})
         //save the user
     } catch (error) {
-       console.log(object)
+      
         res.status(500).send("can not save user");
         console.log(error)
     }
 });
 //login 
-router.post("/login",loginRules,validation, async(req,res) => {
+router.post("/login",loginRules(),validation, async(req,res) => {
 
     const {email,passWord}=req.body;
 try {
